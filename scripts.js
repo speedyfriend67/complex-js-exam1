@@ -60,3 +60,4 @@ function updateBoard() {
 
 // Call updateBoard to initialize the game board
 updateBoard();
+
