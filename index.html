@@ -3,65 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Navier-Stokes Solver</title>
+<title>Painter</title>
 <style>
-  canvas {
+  #canvas {
     border: 1px solid black;
   }
 </style>
 </head>
 <body>
-<canvas id="canvas" width="400" height="400"></canvas>
+<canvas id="canvas" width="800" height="600"></canvas>
+<input type="color" id="colorPicker">
+<input type="range" id="brushSize" min="1" max="20" value="5">
+<button id="eraserBtn">Eraser</button>
+<button id="clearBtn">Clear Canvas</button>
+<button id="saveBtn">Save Drawing</button>
 
 <script>
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
+  let painting = false;
+  let eraserMode = false;
 
-  const nx = 100; // Number of grid points in the x-direction
-  const ny = 100; // Number of grid points in the y-direction
-  const dx = 1.0; // Grid spacing in the x-direction
-  const dy = 1.0; // Grid spacing in the y-direction
-  const dt = 0.01; // Time step
-
-  // Initialize velocity and pressure fields
-  let u = new Array(nx).fill(0).map(() => new Array(ny).fill(0));
-  let v = new Array(nx).fill(0).map(() => new Array(ny).fill(0));
-  let p = new Array(nx).fill(0).map(() => new Array(ny).fill(0));
-
-  function solveNavierStokes() {
-    // Implement finite difference method to solve Navier-Stokes equations
-    // This involves discretizing the equations and solving for the velocity and pressure fields
-    // Details of the numerical scheme are complex and involve iterative solvers
-
-    // Update velocity and pressure fields
-    // This is where the complex computations happen
+  function startPosition(e) {
+    painting = true;
+    draw(e);
   }
 
-  function render() {
-    // Clear canvas
+  function endPosition() {
+    painting = false;
+    ctx.beginPath();
+  }
+
+  function draw(e) {
+    if (!painting) return;
+    ctx.lineWidth = document.getElementById('brushSize').value;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = eraserMode ? 'white' : document.getElementById('colorPicker').value;
+
+    ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+  }
+
+  canvas.addEventListener('mousedown', startPosition);
+  canvas.addEventListener('mouseup', endPosition);
+  canvas.addEventListener('mousemove', draw);
+
+  document.getElementById('eraserBtn').addEventListener('click', function() {
+    eraserMode = !eraserMode;
+    this.textContent = eraserMode ? 'Drawing' : 'Eraser';
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
 
-    // Render velocity field
-    for (let i = 0; i < nx; i++) {
-      for (let j = 0; j < ny; j++) {
-        ctx.beginPath();
-        ctx.moveTo(i * dx, j * dy);
-        ctx.lineTo((i + u[i][j]) * dx, (j + v[i][j]) * dy);
-        ctx.stroke();
-      }
-    }
-
-    // Render pressure field
-    // This is a simplified visualization; actual pressure field rendering is more complex
-  }
-
-  function animate() {
-    solveNavierStokes(); // Solve Navier-Stokes equations
-    render(); // Render results
-    requestAnimationFrame(animate);
-  }
-
-  animate(); // Start animation
+  document.getElementById('saveBtn').addEventListener('click', function() {
+    const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+    const link = document.createElement('a');
+    link.setAttribute('href', image);
+    link.setAttribute('download', 'drawing.png');
+    link.click();
+  });
 </script>
 </body>
 </html>
