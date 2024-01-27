@@ -3,19 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Multiplayer Tic-Tac-Toe</title>
-<link rel="stylesheet" href="styles.css">
+<title>Navier-Stokes Solver</title>
+<style>
+  canvas {
+    border: 1px solid black;
+  }
+</style>
 </head>
 <body>
+<canvas id="canvas" width="400" height="400"></canvas>
 
-<div class="container">
-  <h1>Multiplayer Tic-Tac-Toe</h1>
-  <div class="board" id="board">
-    <!-- Game board will be generated dynamically using JavaScript -->
-  </div>
-  <button onclick="restartGame()">Restart Game</button>
-</div>
+<script>
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
 
-<script src="script.js"></script>
+  const nx = 100; // Number of grid points in the x-direction
+  const ny = 100; // Number of grid points in the y-direction
+  const dx = 1.0; // Grid spacing in the x-direction
+  const dy = 1.0; // Grid spacing in the y-direction
+  const dt = 0.01; // Time step
+
+  // Initialize velocity and pressure fields
+  let u = new Array(nx).fill(0).map(() => new Array(ny).fill(0));
+  let v = new Array(nx).fill(0).map(() => new Array(ny).fill(0));
+  let p = new Array(nx).fill(0).map(() => new Array(ny).fill(0));
+
+  function solveNavierStokes() {
+    // Implement finite difference method to solve Navier-Stokes equations
+    // This involves discretizing the equations and solving for the velocity and pressure fields
+    // Details of the numerical scheme are complex and involve iterative solvers
+
+    // Update velocity and pressure fields
+    // This is where the complex computations happen
+  }
+
+  function render() {
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Render velocity field
+    for (let i = 0; i < nx; i++) {
+      for (let j = 0; j < ny; j++) {
+        ctx.beginPath();
+        ctx.moveTo(i * dx, j * dy);
+        ctx.lineTo((i + u[i][j]) * dx, (j + v[i][j]) * dy);
+        ctx.stroke();
+      }
+    }
+
+    // Render pressure field
+    // This is a simplified visualization; actual pressure field rendering is more complex
+  }
+
+  function animate() {
+    solveNavierStokes(); // Solve Navier-Stokes equations
+    render(); // Render results
+    requestAnimationFrame(animate);
+  }
+
+  animate(); // Start animation
+</script>
 </body>
 </html>
